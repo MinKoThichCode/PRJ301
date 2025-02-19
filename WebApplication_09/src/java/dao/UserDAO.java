@@ -7,6 +7,7 @@ package dao;
 
 import dto.UserDTO;
 import java.sql.Connection;
+import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
@@ -25,15 +26,16 @@ public class UserDAO implements IDAO<UserDTO, String> {
     @Override
     public boolean create(UserDTO entity) {
         String sql = "INSERT [dbo].[tblUsers] ([userID], [fullName], [roleID], [password]) "
-                + "VALUES (N'" + entity.getUserID()
-                + "', N'" + entity.getFullName()
-                + "', N'" + entity.getRoleID()
-                + "', N'" + entity.getPassword() + "')";
+                + "VALUES (?, ? ,? ,?)";
         Connection conn;
         try {
             conn = DBUtils.getConnection();
-            Statement st = conn.createStatement();
-            int n = st.executeUpdate(sql);
+            PreparedStatement ps = conn.prepareStatement(sql);
+            ps.setString(1, entity.getUserID());
+            ps.setString(2, entity.getFullName());
+            ps.setString(3, entity.getRoleID());
+            ps.setString(4, entity.getPassword());
+            int n = ps.executeUpdate();
             return n > 0;
         } catch (ClassNotFoundException ex) {
             Logger.getLogger(UserDAO.class.getName()).log(Level.SEVERE, null, ex);
@@ -49,8 +51,9 @@ public class UserDAO implements IDAO<UserDTO, String> {
         String sql = "SELECT * FROM [tblUsers]";
         try {
             Connection conn = DBUtils.getConnection();
-            Statement st = conn.createStatement();
-            ResultSet rs = st.executeQuery(sql);
+            conn = DBUtils.getConnection();
+            PreparedStatement ps = conn.prepareStatement(sql);
+            ResultSet rs = ps.executeQuery(sql);
             while (rs.next()) {
                 UserDTO user = new UserDTO(
                         rs.getString("userID"),
@@ -69,11 +72,12 @@ public class UserDAO implements IDAO<UserDTO, String> {
 
     @Override
     public UserDTO readById(String id) {
-        String sql = "SELECT * FROM [tblUsers] WHERE [userID] = N'" + id + "'";
+        String sql = "SELECT * FROM tblUsers WHERE userID= ?";
         try {
             Connection conn = DBUtils.getConnection();
-            Statement st = conn.createStatement();
-            ResultSet rs = st.executeQuery(sql);
+            PreparedStatement ps = conn.prepareStatement(sql);
+            ps.setString(1, id);
+            ResultSet rs = ps.executeQuery();
             if (rs.next()) {
                 UserDTO user = new UserDTO(
                         rs.getString("userID"),
@@ -93,15 +97,19 @@ public class UserDAO implements IDAO<UserDTO, String> {
     @Override
     public boolean update(UserDTO entity) {
         String sql = "UPDATE [tblUsers] SET "
-                + "[fullName] = N'" + entity.getFullName() + "', "
-                + "[roleID] = N'" + entity.getRoleID() + "', "
-                + "[password] = N'" + entity.getPassword() + "' "
-                + "WHERE [userID] = N'" + entity.getUserID() + "'";
+                + "[fullName] = ?, "
+                + "[roleID] = ?, "
+                + "[password] =? "
+                + "WHERE [userID] = ?";
         Connection conn;
         try {
             conn = DBUtils.getConnection();
-            Statement st = conn.createStatement();
-            int n = st.executeUpdate(sql);
+            PreparedStatement ps = conn.prepareStatement(sql);
+            ps.setString(1, entity.getFullName());
+            ps.setString(2, entity.getRoleID());
+            ps.setString(3, entity.getPassword());
+            ps.setString(4, entity.getUserID());
+            int n = ps.executeUpdate();
             return n > 0;
         } catch (ClassNotFoundException ex) {
             Logger.getLogger(UserDAO.class.getName()).log(Level.SEVERE, null, ex);
@@ -113,12 +121,13 @@ public class UserDAO implements IDAO<UserDTO, String> {
 
     @Override
     public boolean delete(String id) {
-        String sql = "DELETE FROM [tblUsers] WHERE [userID] = N'" + id + "'";
+        String sql = "DELETE FROM [tblUsers] WHERE [userID] = ?";
         Connection conn;
         try {
             conn = DBUtils.getConnection();
-            Statement st = conn.createStatement();
-            int n = st.executeUpdate(sql);
+            PreparedStatement ps = conn.prepareStatement(sql);
+            ps.setString(1, id);
+            int n = ps.executeUpdate();
             return n > 0;
         } catch (ClassNotFoundException ex) {
             Logger.getLogger(UserDAO.class.getName()).log(Level.SEVERE, null, ex);
@@ -132,13 +141,20 @@ public class UserDAO implements IDAO<UserDTO, String> {
     public List<UserDTO> search(String searchTerm) {
         List<UserDTO> list = new ArrayList<>();
         String sql = "SELECT [userID], [fullName], [roleID], [password] FROM [tblUsers] "
-                + "WHERE [userID] LIKE N'%" + searchTerm + "%' "
-                + "OR [fullName] LIKE N'%" + searchTerm + "%' "
-                + "OR [roleID] LIKE N'%" + searchTerm + "%'";
+                + "WHERE [userID] LIKE ? "
+                + "OR [fullName] LIKE ? "
+                + "OR [roleID] LIKE ?";
         try {
+            String searchPattern = "%" + searchTerm + "%";
             Connection conn = DBUtils.getConnection();
-            Statement st = conn.createStatement();
-            ResultSet rs = st.executeQuery(sql);
+            PreparedStatement ps = conn.prepareStatement(sql);
+            
+            // Thiết lập giá trị cho tất cả các tham số 
+            ps.setString(1, searchPattern);
+            ps.setString(2, searchPattern);
+            ps.setString(3, searchPattern);
+
+            ResultSet rs = ps.executeQuery();
             while (rs.next()) {
                 UserDTO user = new UserDTO(
                         rs.getString("userID"),
