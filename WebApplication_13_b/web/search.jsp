@@ -4,6 +4,7 @@
     Author     : ADMIN
 --%>
 
+<%@page import="utils.AuthUtils"%>
 <%@page import="dto.BookDTO"%>
 <%@page import="java.awt.print.Book"%>
 <%@page import="java.util.List"%>
@@ -54,6 +55,85 @@
                 transition: 0.3s ease;
             }
 
+            /* Search section styles */
+            .search-section {
+                background-color: #fff;
+                border-radius: 8px;
+                padding: 20px;
+                margin-bottom: 20px;
+                box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+                display: flex;
+                align-items: center;
+            }
+
+            .search-section form {
+                display: flex;
+                align-items: center;
+                flex-grow: 1;
+            }
+
+            .search-section label {
+                margin-right: 10px;
+                font-weight: bold;
+                color: #333;
+            }
+
+            .search-input {
+                flex-grow: 1;
+                padding: 10px;
+                border: 1px solid #ddd;
+                border-radius: 4px;
+                font-size: 14px;
+                margin-right: 10px;
+                transition: border-color 0.3s;
+            }
+
+            .search-input:focus {
+                border-color: #009879;
+                outline: none;
+                box-shadow: 0 0 0 2px rgba(0, 152, 121, 0.2);
+            }
+
+            .search-btn {
+                background-color: #009879;
+                color: white;
+                border: none;
+                border-radius: 4px;
+                padding: 10px 15px;
+                cursor: pointer;
+                font-weight: bold;
+                transition: background-color 0.3s;
+            }
+
+            .search-btn:hover {
+                background-color: #00806a;
+            }
+
+            /* Add button styles */
+            .add-btn {
+                display: inline-block;
+                background-color: #007bff;
+                color: white;
+                text-decoration: none;
+                border-radius: 4px;
+                padding: 10px 15px;
+                margin-bottom: 20px;
+                font-weight: bold;
+                transition: background-color 0.3s;
+            }
+
+            .add-btn:hover {
+                background-color: #0069d9;
+                text-decoration: none;
+            }
+
+            /* Add a nice icon to the add button */
+            .add-btn::before {
+                content: "+";
+                margin-right: 5px;
+                font-weight: bold;
+            }
+
             /* Responsive design */
             @media screen and (max-width: 600px) {
                 .book-table {
@@ -73,26 +153,25 @@
             <%                if (session.getAttribute("user") != null) {
                     UserDTO user = (UserDTO) session.getAttribute("user");
             %>
-            <h1> Welcome <%=user.getFullName()%> </h1>
-            <form action="MainController">
-                <input type="hidden" name="action" value="logout"/>
-                <input type="submit" value="Logout"/>
-            </form>
 
-            <br/>
-            
             <%
-              String searchTerm = request.getAttribute("searchTerm") + "";
-              searchTerm = searchTerm.equals("null")?"":searchTerm;
-                
-                %>
-            
-
-            <form action="MainController">
-                <input type="hidden" name="action" value="search"/>
-                Search Books: <input type="text" name="searchTerm" value="<%= searchTerm %>"/>
-                <input type="submit" value="Search"/>
-            </form>
+                String searchTerm = request.getAttribute("searchTerm") + "";
+                searchTerm = searchTerm.equals("null") ? "" : searchTerm;
+            %>
+            <div class="search-section">
+                <form action="MainController">
+                    <input type="hidden" name="action" value="search"/>
+                    <label for="searchInput">Search Books:</label>
+                    <input type="text" id="searchInput" name="searchTerm" value="<%=searchTerm%>" class="search-input" placeholder="Enter book title, author or ID..."/>
+                    <input type="submit" value="Search" class="search-btn"/>
+                </form>
+            </div>
+            <% if (AuthUtils.isAdmin(session)) {
+            %>
+            <a href="bookForm.jsp" class="add-btn">
+                Add New Book    
+            </a> 
+            <%}%>
 
             <%
                 if (request.getAttribute("books") != null) {
@@ -108,8 +187,10 @@
                         <th>PublishYear</th>
                         <th>Price</th>
                         <th>Quantity</th>
+                        <% if (AuthUtils.isAdmin(session)) {
+                            %>
                         <th>Action</th>
-                        
+                            <%}%>
                     </tr>
                 </thead>
                 <tbody>
@@ -122,9 +203,15 @@
                         <td><%=b.getPublishYear()%></td>
                         <td><%=b.getPrice()%></td>
                         <td><%=b.getQuantity()%></td>
+                        <% 
+                            if (AuthUtils.isAdmin(session)) {
+                        %>
                         <td><a href="MainController?action=delete&id=<%=b.getBookID()%>&searchTerm=<%=searchTerm%>">
-                <img src="assets/images/delete-file-icon.png" style="width: 30px">
-                                  </a> </td>
+                                <img src="assets/images/delete-icon.png" style="height: 25px"/>
+
+                            </a></td>
+
+                        <%}%>
                     </tr>
                     <%
                         }

@@ -4,7 +4,7 @@
     Author     : ADMIN
 --%>
 
-<%@page import="dto.BookDTO"%>
+<%@page import="dto.ProjectsDTO"%>
 <%@page import="java.awt.print.Book"%>
 <%@page import="java.util.List"%>
 <%@page import="dto.UserDTO"%>
@@ -73,7 +73,7 @@
             <%                if (session.getAttribute("user") != null) {
                     UserDTO user = (UserDTO) session.getAttribute("user");
             %>
-            <h1> Welcome <%=user.getFullName()%> </h1>
+            <h1> Welcome <%=user.getUserName()%> </h1>
             <form action="MainController">
                 <input type="hidden" name="action" value="logout"/>
                 <input type="submit" value="Logout"/>
@@ -90,38 +90,35 @@
 
             <form action="MainController">
                 <input type="hidden" name="action" value="search"/>
-                Search Books: <input type="text" name="searchTerm" value="<%= searchTerm %>"/>
+                Search Projects: <input type="text" name="searchTerm" value="<%= searchTerm %>"/>
                 <input type="submit" value="Search"/>
             </form>
 
             <%
-                if (request.getAttribute("books") != null) {
-                    List<BookDTO> books = (List<BookDTO>) request.getAttribute("books");
+                if (request.getAttribute("projects") != null) {
+                    List<ProjectDTO> projects = (List<ProjectsDTO>) request.getAttribute("projects");
 
             %>
             <table class="book-table">
                 <thead>
                     <tr>
-                        <th>BookID</th>
-                        <th>Title</th>
-                        <th>Author</th>
-                        <th>PublishYear</th>
-                        <th>Price</th>
-                        <th>Quantity</th>
-                        <th>Action</th>
+                         <th>project_id</th>
+                        <th>project_name</th>
+                        <th>Description</th>
+                        <th>Status</th>
+                        <th>estimated_launch</th>
                         
                     </tr>
                 </thead>
                 <tbody>
-                    <%            for (BookDTO b : books) {
+                    <%            for (ProjectDTO p : projects) {
                     %>
                     <tr>
-                        <td><%=b.getBookID()%></td>
-                        <td><%=b.getTitle()%></td>
-                        <td><%=b.getAuthor()%></td>
-                        <td><%=b.getPublishYear()%></td>
-                        <td><%=b.getPrice()%></td>
-                        <td><%=b.getQuantity()%></td>
+                        <td><%= p.getProjectsID()%></td>
+                        <td><%= p.getProjectsName()%></td>
+                        <td><%= p.getDescription()%></td>
+                        <td><%= p.getStatus()%></td>
+                        <td><%= p.getEstimatedLaunch()%></td>
                         <td><a href="MainController?action=delete&id=<%=b.getBookID()%>&searchTerm=<%=searchTerm%>">
                 <img src="assets/images/delete-file-icon.png" style="width: 30px">
                                   </a> </td>
