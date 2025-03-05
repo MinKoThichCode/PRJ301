@@ -63,6 +63,7 @@
 
     </head>
     <body> 
+        
 
         <%
             String message = (String) session.getAttribute("message");
@@ -157,6 +158,6 @@
 
         </div>
 
-
+         
     </body>
 </html>
