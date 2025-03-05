@@ -94,38 +94,44 @@ public class ProjectsDAO implements IDAO<ProjectsDTO, String> {
         return null;
     }
 
-    @Override
-    public boolean updateProjectsStatus(ProjectsDTO entity) {
-        String sql = "UPDATE [dbo].[tblStartupProjects] "
-                + "SET Status = ? "
-                + "WHERE project_id = ?";
-        try {
-            Connection conn = DBUtils.getConnection();
-            PreparedStatement ps = conn.prepareStatement(sql);
+   
 
-            ps.setString(1, entity.getStatus());
-
-            int i = ps.executeUpdate();
-            return i > 0; // Trả về true nếu có dòng được cập nhật
-        } catch (Exception e) {
-            System.out.println("Error in update: " + e.toString());
-        }
-        return false;
-
-    }
-    
-     public boolean updateStatus(int projectId, String newStatus) {
+    public boolean updateStatus(int projectId, String newStatus) {
         String sql = "UPDATE tblStartupProjects SET Status = ? WHERE project_id = ?";
         try (Connection conn = DBUtils.getConnection();
-             PreparedStatement ps = conn.prepareStatement(sql)) {
+                PreparedStatement ps = conn.prepareStatement(sql)) {
+
             ps.setString(1, newStatus);
             ps.setInt(2, projectId);
-            int n = ps.executeUpdate();
-            return n > 0;
+            return ps.executeUpdate() > 0;
         } catch (ClassNotFoundException | SQLException ex) {
-            Logger.getLogger(ProjectsDAO.class.getName()).log(Level.SEVERE, null, ex);
+            ex.printStackTrace();
         }
         return false;
     }
-    
+
+    public ProjectsDTO readById(int projectId) {
+        String sql = "SELECT project_id, project_name, Description, Status, estimated_launch "
+                + "FROM tblStartupProjects WHERE project_id = ?";
+        try (Connection conn = DBUtils.getConnection();
+                PreparedStatement ps = conn.prepareStatement(sql)) {
+
+            ps.setInt(1, projectId);
+            try (ResultSet rs = ps.executeQuery()) {
+                if (rs.next()) {
+                    return new ProjectsDTO(
+                            rs.getInt("project_id"),
+                            rs.getString("project_name"),
+                            rs.getString("Description"),
+                            rs.getString("Status"),
+                            rs.getDate("estimated_launch")
+                    );
+                }
+            }
+        } catch (ClassNotFoundException | SQLException ex) {
+            ex.printStackTrace();
+        }
+        return null;
+    }
+
 }

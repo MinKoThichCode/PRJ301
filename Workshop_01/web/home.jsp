@@ -65,6 +65,20 @@
     <body> 
 
         <%
+            String message = (String) session.getAttribute("message");
+            if (message != null) {
+        %>
+        <div class="alert"><%= message%></div>
+        <%
+                session.removeAttribute("message"); // remove it after displaying
+            }
+        %>
+
+        
+        
+        
+        
+        <%
             UserDTO user = (UserDTO) session.getAttribute("user");
         %>
 
@@ -119,7 +133,7 @@
                         <td><%= p.getDescription()%></td>
                         <td><%= p.getStatus()%></td>
                         <td><%= p.getEstimatedLaunch()%></td>
-                        <td><a href="MainController?action=update&projectsID=<%=p.getProjectsID()%>&projectsName=<%=projectsName%>">
+                        <td><a href="MainController?action=updateProject&projectsID=<%= p.getProjectsID()%>">
                                 <img src="assets/img/edit-icon.png" style="height: 25px"/>
 
 

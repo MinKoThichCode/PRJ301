@@ -25,6 +25,6 @@ public interface IDAO<T, K> {
 
     public List<T> search(String searchTerm);
     
-     public boolean updateProjectsStatus(T entity);
+    
 
 }

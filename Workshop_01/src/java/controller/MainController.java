@@ -18,6 +18,7 @@ import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
 
 /**
  *
@@ -74,24 +75,46 @@ public class MainController extends HttpServlet {
                     request.setAttribute("projects", projects);
                     request.getSession().setAttribute("projectsName", projectsName);
                     url = "home.jsp";
-                } else if (action.equals("update")) {
-                    // Kiểm tra quyền truy cập: chỉ Founder mới được update
-                    UserDTO user = (UserDTO) request.getSession().getAttribute("user");
+                } else if (action.equals("updateProject")) {
+                    HttpSession session = request.getSession();
+                    UserDTO user = (UserDTO) session.getAttribute("user");
+                    if (user == null) {
+                        session.setAttribute("message", "You need to login!");
+                    } else {
+                        int projectId = Integer.parseInt(request.getParameter("projectsID"));
+                        ProjectsDAO pdao = new ProjectsDAO();
+                        ProjectsDTO project = pdao.readById(projectId);
+                       
+
+                        if (project != null) {
+                            request.setAttribute("project", project);
+                            url = "update.jsp";  // Điều hướng sang trang chỉnh sửa
+                        } else {
+                            request.setAttribute("message", "Project does not exist!");
+                            url = "home.jsp";
+                        }
+                    }
+                } // Thực hiện update
+                else if (action.equals("update")) {
+                    HttpSession session = request.getSession();
+                    UserDTO user = (UserDTO) session.getAttribute("user");
+
                     if (user == null || !user.getRole().equalsIgnoreCase("Founder")) {
-                        request.getSession().setAttribute("message", "Chỉ Founder mới được cập nhật trạng thái dự án!");
+                        session.setAttribute("message", "Only Founder can update!");
                         url = "home.jsp";
                     } else {
-                        // Xử lý cập nhật trạng thái dự án
                         int projectId = Integer.parseInt(request.getParameter("project_id"));
-                        String newStatus = request.getParameter("newStatus");
+                        String newStatus = request.getParameter("status");
+
                         ProjectsDAO pdao = new ProjectsDAO();
                         boolean updated = pdao.updateStatus(projectId, newStatus);
+
                         if (updated) {
-                            request.getSession().setAttribute("message", "Cập nhật trạng thái dự án thành công.");
+                            session.setAttribute("message", "Update successful!");
                         } else {
-                            request.getSession().setAttribute("message", "Cập nhật trạng thái dự án thất bại.");
+                            session.setAttribute("message", "Update failed!");
                         }
-                        url = "home.jsp";
+                        url = "home.jsp";  // Trở về trang chính sau khi cập nhật
                     }
                 }
             }

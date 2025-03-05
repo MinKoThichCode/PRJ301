@@ -176,10 +176,4 @@ public class UserDAO implements IDAO<UserDTO, String> {
         return list;
     }
 
-    @Override
-    public boolean updateProjectsStatus(UserDTO entity) {
-       return false;
-    }
-
-    
 }
