@@ -101,7 +101,10 @@
             <form action="MainController">
                 <input type="hidden" name="action" value="search"/>
                 Search Projects: <input type="text" name="searchTerm" value="<%=projectsName%>"> 
-                <input type="submit" value="Search">
+                <input type="submit" value="Search"> 
+                <br>
+                <a href="MainController?action=createProjects">Create New Project</a>
+
             </form>
 
             <br/>
@@ -133,7 +136,7 @@
                         <td><%= p.getDescription()%></td>
                         <td><%= p.getStatus()%></td>
                         <td><%= p.getEstimatedLaunch()%></td>
-                        <td><a href="MainController?action=updateProject&projectsID=<%= p.getProjectsID()%>">
+                        <td><a href="MainController?action=updateProjects&projectsID=<%= p.getProjectsID()%>">
                                 <img src="assets/img/edit-icon.png" style="height: 25px"/>
 
 

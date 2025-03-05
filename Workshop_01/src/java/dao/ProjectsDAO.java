@@ -24,12 +24,50 @@ public class ProjectsDAO implements IDAO<ProjectsDTO, String> {
 
     @Override
     public boolean create(ProjectsDTO entity) {
+        String sql = "INSERT INTO tblStartupProjects (project_name, Description, Status, estimated_launch) "
+                + "VALUES (?, ?, ?, ?)";
+        Connection conn;
+
+        try {
+            conn = DBUtils.getConnection();
+            PreparedStatement ps = conn.prepareStatement(sql);
+            ps.setString(1, entity.getProjectsName());
+            ps.setString(2, entity.getDescription());
+            ps.setString(3, entity.getStatus());
+            ps.setDate(4, entity.getEstimatedLaunch());
+            int n = ps.executeUpdate();
+            return n > 0;
+
+        } catch (ClassNotFoundException ex) {
+            Logger.getLogger(UserDAO.class.getName()).log(Level.SEVERE, null, ex);
+        } catch (SQLException ex) {
+            Logger.getLogger(UserDAO.class.getName()).log(Level.SEVERE, null, ex);
+        }
         return false;
     }
 
     @Override
     public List<ProjectsDTO> readAll() {
-        return null;
+        String sql = "SELECT * FROM tblStartupProjects";
+        List<ProjectsDTO> list = new ArrayList<>();
+        try (Connection conn = DBUtils.getConnection();
+                PreparedStatement ps = conn.prepareStatement(sql);
+                ResultSet rs = ps.executeQuery()) {
+
+            while (rs.next()) {
+                ProjectsDTO project = new ProjectsDTO(
+                        rs.getInt("project_id"),
+                        rs.getString("project_name"),
+                        rs.getString("Description"),
+                        rs.getString("Status"),
+                        rs.getDate("estimated_launch")
+                );
+                list.add(project);
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return list;
     }
 
     public List<ProjectsDTO> searchByProjectsName(String searchTerm) {
@@ -93,8 +131,6 @@ public class ProjectsDAO implements IDAO<ProjectsDTO, String> {
     public ProjectsDTO readByUsername(String id) {
         return null;
     }
-
-   
 
     public boolean updateStatus(int projectId, String newStatus) {
         String sql = "UPDATE tblStartupProjects SET Status = ? WHERE project_id = ?";

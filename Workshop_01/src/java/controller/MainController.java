@@ -27,6 +27,8 @@ import javax.servlet.http.HttpSession;
 @WebServlet(name = "MainController", urlPatterns = {"/MainController"})
 public class MainController extends HttpServlet {
 
+    private ProjectsDAO pdao = new ProjectsDAO();
+
     private static final String LOGIN_PAGE = "login.jsp";
 
     public UserDTO getUser(String strUsername) {
@@ -44,6 +46,18 @@ public class MainController extends HttpServlet {
         }
     }
 
+    public void search(HttpServletRequest request, HttpServletResponse response)
+            throws ServletException, IOException {
+        String projectsName = request.getParameter("searchTerm");
+        if(projectsName == null) {
+            projectsName = "";
+        }
+        List<ProjectsDTO> projects = (List<ProjectsDTO>) pdao.searchByProjectsName(projectsName);
+        request.setAttribute("projects", projects);
+        request.getSession().setAttribute("projectsName", projectsName);
+
+    }
+
     protected void processRequest(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
         response.setContentType("text/html;charset=UTF-8");
@@ -56,11 +70,13 @@ public class MainController extends HttpServlet {
                 if (action.equals("login")) {
                     String strUsername = request.getParameter("txtUsername");
                     String strPassword = request.getParameter("txtPassword");
+                    
                     if (isValidLogin(strUsername, strPassword)) {
                         url = "home.jsp";
                         UserDTO user = getUser(strUsername);
                         request.getSession().setAttribute("user", user);
-
+                        //search
+                        search(request, response);
                     } else {
                         request.setAttribute("message", "Incorrect Username or Password");
                         url = "login.jsp";
@@ -69,22 +85,19 @@ public class MainController extends HttpServlet {
                     request.getSession().invalidate();// huy session
                     url = "login.jsp";
                 } else if (action.equals("search")) {
-                    ProjectsDAO pdao = new ProjectsDAO();
-                    String projectsName = request.getParameter("searchTerm");
-                    List<ProjectsDTO> projects = (List<ProjectsDTO>) pdao.searchByProjectsName(projectsName);
-                    request.setAttribute("projects", projects);
-                    request.getSession().setAttribute("projectsName", projectsName);
+                    search(request, response);
                     url = "home.jsp";
-                } else if (action.equals("updateProject")) {
+
+                } else if (action.equals("updateProjects")) {
                     HttpSession session = request.getSession();
                     UserDTO user = (UserDTO) session.getAttribute("user");
-                    if (user == null) {
-                        session.setAttribute("message", "You need to login!");
+                    if (user == null || !user.getRole().equalsIgnoreCase("Founder")) {
+                        session.setAttribute("message", "Only Founder can update!");
+                        url = "home.jsp";
                     } else {
                         int projectId = Integer.parseInt(request.getParameter("projectsID"));
                         ProjectsDAO pdao = new ProjectsDAO();
                         ProjectsDTO project = pdao.readById(projectId);
-                       
 
                         if (project != null) {
                             request.setAttribute("project", project);
@@ -99,10 +112,8 @@ public class MainController extends HttpServlet {
                     HttpSession session = request.getSession();
                     UserDTO user = (UserDTO) session.getAttribute("user");
 
-                    if (user == null || !user.getRole().equalsIgnoreCase("Founder")) {
-                        session.setAttribute("message", "Only Founder can update!");
-                        url = "home.jsp";
-                    } else {
+                    if (user != null && user.getRole().equalsIgnoreCase("Founder")) {
+
                         int projectId = Integer.parseInt(request.getParameter("project_id"));
                         String newStatus = request.getParameter("status");
 
@@ -116,6 +127,39 @@ public class MainController extends HttpServlet {
                         }
                         url = "home.jsp";  // Trở về trang chính sau khi cập nhật
                     }
+
+                } else if (action.equals("createProjects")) {
+                    HttpSession session = request.getSession();
+                    UserDTO user = (UserDTO) session.getAttribute("user"); // nhớ dùng key "user"
+                    if (user == null || !user.getRole().equalsIgnoreCase("Founder")) {
+                        session.setAttribute("message", "Only Founder can create projects!");
+                        url = "home.jsp";
+                    } else {
+                        // Chuyển hướng đến form create.jsp
+                        url = "create.jsp";
+                    }
+                } else if (action.equals("create")) {
+                    HttpSession session = request.getSession();
+                    UserDTO user = (UserDTO) session.getAttribute("user"); // nhớ dùng key "user"
+                    if (user != null && user.getRole().equalsIgnoreCase("Founder")) {
+                        // Lấy dữ liệu từ form
+                        String projectName = request.getParameter("project_name");
+                        String description = request.getParameter("description");
+                        String status = request.getParameter("status");
+                        java.sql.Date estimatedLaunch = java.sql.Date.valueOf(request.getParameter("estimated_launch"));
+
+                        ProjectsDTO newProject = new ProjectsDTO(0, projectName, description, status, estimatedLaunch);
+                        ProjectsDAO pdao = new ProjectsDAO();
+                        boolean created = pdao.create(newProject);
+                        if (created) {
+                            session.setAttribute("message", "Project created successfully!");
+                        } else {
+                            session.setAttribute("message", "Project creation failed!");
+                        }
+                    } else {
+                        session.setAttribute("message", "Permission denied!");
+                    }
+                    url = "home.jsp";
                 }
             }
 
