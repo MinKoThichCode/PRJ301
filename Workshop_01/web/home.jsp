@@ -63,7 +63,7 @@
 
     </head>
     <body> 
-        
+
 
         <%
             String message = (String) session.getAttribute("message");
@@ -75,10 +75,10 @@
             }
         %>
 
-        
-        
-        
-        
+
+
+
+
         <%
             UserDTO user = (UserDTO) session.getAttribute("user");
         %>
@@ -99,6 +99,12 @@
             %>
 
 
+            <%                if (user != null && user.getRole().equalsIgnoreCase("Founder")) {
+
+
+            %>
+
+
             <form action="MainController">
                 <input type="hidden" name="action" value="search"/>
                 Search Projects: <input type="text" name="searchTerm" value="<%=projectsName%>"> 
@@ -107,6 +113,13 @@
                 <a href="MainController?action=createProjects">Create New Project</a>
 
             </form>
+
+
+            <%
+                
+                }
+
+            %>
 
             <br/>
             <br/>
@@ -158,6 +171,6 @@
 
         </div>
 
-         
+
     </body>
 </html>

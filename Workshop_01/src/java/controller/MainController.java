@@ -101,13 +101,13 @@ public class MainController extends HttpServlet {
 
                         if (project != null) {
                             request.setAttribute("project", project);
-                            url = "update.jsp";  // Điều hướng sang trang chỉnh sửa
+                            url = "update.jsp";  
                         } else {
                             request.setAttribute("message", "Project does not exist!");
                             url = "home.jsp";
                         }
                     }
-                } // Thực hiện update
+                } 
                 else if (action.equals("update")) {
                     HttpSession session = request.getSession();
                     UserDTO user = (UserDTO) session.getAttribute("user");
@@ -125,12 +125,12 @@ public class MainController extends HttpServlet {
                         } else {
                             session.setAttribute("message", "Update failed!");
                         }
-                        url = "home.jsp";  // Trở về trang chính sau khi cập nhật
+                        url = "home.jsp";  
                     }
 
                 } else if (action.equals("createProjects")) {
                     HttpSession session = request.getSession();
-                    UserDTO user = (UserDTO) session.getAttribute("user"); // nhớ dùng key "user"
+                    UserDTO user = (UserDTO) session.getAttribute("user"); 
                     if (user == null || !user.getRole().equalsIgnoreCase("Founder")) {
                         session.setAttribute("message", "Only Founder can create projects!");
                         url = "home.jsp";
@@ -140,7 +140,7 @@ public class MainController extends HttpServlet {
                     }
                 } else if (action.equals("create")) {
                     HttpSession session = request.getSession();
-                    UserDTO user = (UserDTO) session.getAttribute("user"); // nhớ dùng key "user"
+                    UserDTO user = (UserDTO) session.getAttribute("user"); 
                     if (user != null && user.getRole().equalsIgnoreCase("Founder")) {
                         // Lấy dữ liệu từ form
                         String projectName = request.getParameter("project_name");
