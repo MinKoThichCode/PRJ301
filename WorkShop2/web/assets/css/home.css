@@ -1,0 +1,146 @@
+/*
+To change this license header, choose License Headers in Project Properties.
+To change this template file, choose Tools | Templates
+and open the template in the editor.
+*/
+/* 
+    Created on : Mar 16, 2025, 7:55:36 PM
+    Author     : ADMIN
+*/
+/* Reset cơ bản */
+            * {
+                margin: 0;
+                padding: 0;
+                box-sizing: border-box;
+            }
+
+            /* Body */
+            body {
+                font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+                background-color: #f4f4f4;
+                color: #333;
+                min-height: 100vh;
+                display: flex;
+                flex-direction: column;
+                padding: 20px;
+            }
+
+            /* Tiêu đề chính */
+            h1 {
+                margin-top: 0;
+                text-align: center;
+                font-weight: 600;
+                color: #333;
+                margin-bottom: 20px;
+            }
+
+            /* Form chung (Search, Filter) */
+            form {
+                text-align: center;
+                margin: 10px 0;
+            }
+
+            form input[type="text"],
+            form select {
+                padding: 8px 12px;
+                font-size: 14px;
+                border: 1px solid #ccc;
+                border-radius: 4px;
+                margin-right: 5px;
+            }
+
+            form input[type="submit"] {
+                padding: 8px 16px;
+                font-size: 14px;
+                background-color: #009879;
+                color: #fff;
+                border: none;
+                border-radius: 4px;
+                cursor: pointer;
+                transition: background-color 0.3s ease;
+                margin-left: 5px;
+            }
+
+            form input[type="submit"]:hover {
+                background-color: #007f66;
+            }
+
+            /* Link chung (Logout, CreateExam, AddQuestion, TakeExam, v.v.) */
+            a {
+                display: inline-block;
+                text-decoration: none;
+                font-weight: bold;
+                color: #009879;
+                margin: 0 5px;
+                transition: color 0.3s ease;
+            }
+
+            a:hover {
+                color: #007f66;
+            }
+
+            /* Thông báo (message) */
+            p[style*="color: green;"] {
+                text-align: center;
+                font-weight: bold;
+                margin: 10px 0;
+            }
+
+            /* Bảng Exam */
+            .exam-table {
+                width: 90%;
+                margin: 20px auto;
+                border-collapse: collapse;
+                font-size: 14px;
+                font-family: Arial, sans-serif;
+                box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+            }
+
+            .exam-table thead th {
+                background-color: #009879;
+                color: #ffffff;
+                text-align: left;
+                font-weight: bold;
+                padding: 12px 15px;
+            }
+
+            .exam-table tbody tr {
+                border-bottom: 1px solid #dddddd;
+            }
+
+            .exam-table tbody tr:nth-of-type(even) {
+                background-color: #f3f3f3;
+            }
+
+            .exam-table tbody tr:last-of-type {
+                border-bottom: 2px solid #009879;
+            }
+
+            .exam-table tbody td {
+                padding: 12px 15px;
+            }
+
+            .exam-table tbody tr:hover {
+                background-color: #f5f5f5;
+                transition: 0.3s ease;
+            }
+
+            /* Footer */
+            .footer {
+                margin-top: auto;
+                width: 100%;
+                background-color: #333;
+                color: #fff;
+                padding: 10px 0;
+                text-align: center;
+            }
+
+            .footer a {
+                color: #fff;
+                margin: 0 5px;
+            }
+
+            .footer a:hover {
+                color: #ddd;
+            }
+
