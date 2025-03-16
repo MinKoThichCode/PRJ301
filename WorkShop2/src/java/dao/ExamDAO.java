@@ -207,4 +207,48 @@ public class ExamDAO {
         return null;
     }
 
+    public boolean updateExam(int examId, String title, String subject, int duration, int totalMarks) {
+        String sql = "UPDATE tblExams SET exam_title = ?, subject = ?, duration = ?, total_marks = ? WHERE exam_id = ?";
+        try (Connection conn = DBUtils.getConnection();
+                PreparedStatement ps = conn.prepareStatement(sql)) {
+
+            ps.setString(1, title);
+            ps.setString(2, subject);
+            ps.setInt(3, duration);
+            ps.setInt(4, totalMarks);
+            ps.setInt(5, examId);
+
+            return ps.executeUpdate() > 0;
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return false;
+    }
+
+    public boolean addQuestion(int examId, String questionText, String optionA,
+            String optionB,
+            String optionC, String optionD, String correctOption) {
+        String sql = "INSERT INTO tblQuestions (exam_id, question_text,"
+                + " option_a,"
+                + " option_b, option_c,"
+                + " option_d, correct_option) "
+                + "VALUES (?, ?, ?, ?, ?, ?, ?)";
+        try (Connection conn = DBUtils.getConnection();
+                PreparedStatement ps = conn.prepareStatement(sql)) {
+
+            ps.setInt(1, examId);
+            ps.setString(2, questionText);
+            ps.setString(3, optionA);
+            ps.setString(4, optionB);
+            ps.setString(5, optionC);
+            ps.setString(6, optionD);
+            ps.setString(7, correctOption);
+
+            return ps.executeUpdate() > 0;
+        } catch (ClassNotFoundException | SQLException ex) {
+            ex.printStackTrace();
+        }
+        return false;
+
+    }
 }

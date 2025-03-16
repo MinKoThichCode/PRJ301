@@ -55,43 +55,74 @@
                 return;
             }
         %>
-        
-        
+
+
         <h1>Welcome <%= user.getName()%></h1>
-        
+
         <form action="MainController">
             <input type="hidden" name="action" value="logout">
             <input type="submit" value="Logout">
         </form>
         <br>
-        
-        
-        
-        
-        <% if (user.getRole().equalsIgnoreCase("Instructor")) { %>
+
+        <%
+            String msg = (String) session.getAttribute("message");
+            if (msg != null) {
+        %>
+        <p style="color: green;"><%= msg%></p>
+        <%
+                session.removeAttribute("message");
+            }
+        %>
+
+
+
+
+
         <%
             String searchTerm = request.getAttribute("searchTerm") + "";
-            searchTerm = searchTerm.equals("null")?"":searchTerm;
+            searchTerm = searchTerm.equals("null") ? "" : searchTerm;
         %>
-        
-        <form action="ExamController">
-            <input type="hidden" name="action" value="searchExam"/>
+
+        <form action="MainController">
+            <input type="hidden" name="action" value="search"/>
             Search Exam: <input type="text" name="searchTerm" value="<%=searchTerm%>"> 
             <input type="submit" value="Search"> 
             <br>
-            <a href="MainController?action=createExam">Create New Exam</a>
+            <% if (user.getRole().equalsIgnoreCase("Instructor")) { %>
+            <a href="MainController?action=createExam">Create New Exam</a> 
+
         </form>
         <% } %>
         <br/><br/>
-        
-        
-        
-        
-        
-        
-        
+
+
+
+        <form action="MainController">
+            <input type="hidden" name="action" value="viewByCategory"/>
+            <label>Filter by Category:</label>
+            <select name="categoryId">
+                <option value="1">Math</option>
+                <option value="2">Physics</option>
+                <option value="3">Science</option>
+                <option value="4">History</option>
+                <option value="5">Literature</option>
+            </select>
+            <input type="submit" value="Filter">
+        </form>
+
+
+
+
+
+
+
         <% if (request.getAttribute("exams") != null) {
                 List<ExamDTO> exams = (List<ExamDTO>) request.getAttribute("exams"); %>
+
+
+
+
         <table class="exam-table">
             <thead>
                 <tr>
@@ -102,6 +133,10 @@
                     <th>Total Marks</th>
                     <th>Duration (minute)</th>
                     <th>Action</th>
+                        <% if (user.getRole().equalsIgnoreCase("Instructor")) {%>
+                    <th>Add Question</th>
+                        <%}%>
+
                 </tr>
             </thead>
             <tbody>
@@ -113,16 +148,28 @@
                     <td><%= e.getCategoryId()%></td>
                     <td><%= e.getTotalMarks()%></td>
                     <td><%= e.getDuration()%></td>
-                    
+
                     <td>
                         <% if (user.getRole().equalsIgnoreCase("Instructor")) {%>
-                        <a href="MainController?action=updateExam&Id=<%= e.getId()%>">
+                        <a href="MainController?action=updateExam&id=<%= e.getId()%>">
                             <img src="assets/img/edit-icon.png" style="height: 25px"/>
                         </a>
+
+
+
                         <% } else {%>
                         <a href="MainController?action=takeExam&examID=<%= e.getId()%>">Take Exam</a>
                         <% } %>
                     </td>
+
+                    <td>
+                        <% if (user.getRole().equalsIgnoreCase("Instructor")) {%>
+                        <a href="MainController?action=addQuestion&exam_id=<%= e.getId()%>">Add Question</a>
+                    </td>
+
+                    <%}%>
+
+
                 </tr>
                 <% } %>
             </tbody>
