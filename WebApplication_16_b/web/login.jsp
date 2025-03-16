@@ -1,6 +1,5 @@
-
+<%@taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
 <%@page contentType="text/html" pageEncoding="UTF-8"%>
-<%@taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <!DOCTYPE html>
 <html>
     <head>
@@ -94,9 +93,9 @@
                     <button type="submit" class="submit-btn">Đăng nhập</button>
                     
                     <%
-                        String message = request.getAttribute("message")+"";
+                        String mess = request.getAttribute("mess")+"";
                     %>
-                    <%=message.equals("null")?"":message%>
+                    <%=mess.equals("null")?"":mess%>
                 </form>
             </div>
         </div>
