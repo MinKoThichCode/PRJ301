@@ -41,9 +41,8 @@ public class MainController extends HttpServlet {
             HttpSession session = request.getSession();
             session.setAttribute("user", user);
             session.setAttribute("message", "Hello" + " " + userName + "!");
-            response.sendRedirect("ExamController");
-            return null; // Không cần forward nữa vì đã redirect
-
+            url = "home.jsp";
+            
         } else {
             request.setAttribute("message", "Invalid username or password");
             url = "login.jsp";
@@ -64,6 +63,8 @@ public class MainController extends HttpServlet {
 
         return url;
     }
+
+    
 
     protected void processRequest(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
