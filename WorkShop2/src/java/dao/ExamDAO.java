@@ -6,6 +6,7 @@
 package dao;
 
 import dto.ExamDTO;
+import dto.QuestionDTO;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -251,4 +252,35 @@ public class ExamDAO {
         return false;
 
     }
+
+    public List<QuestionDTO> getQuestionsByExam(int examId) {
+        List<QuestionDTO> questions = new ArrayList<>();
+        String sql = "SELECT * FROM tblQuestions WHERE exam_id = ?";
+
+        try (Connection conn = DBUtils.getConnection();
+                PreparedStatement ps = conn.prepareStatement(sql)) {
+
+            ps.setInt(1, examId);
+            try (ResultSet rs = ps.executeQuery()) {
+                while (rs.next()) {
+                    QuestionDTO qs = new QuestionDTO();
+                    qs.setQuestionId(rs.getInt("question_id"));
+                    qs.setExamId(rs.getInt("exam_id"));
+                    qs.setQuestionText(rs.getString("question_text"));
+                    qs.setOptionA(rs.getString("option_a"));
+                    qs.setOptionB(rs.getString("option_b"));
+                    qs.setOptionC(rs.getString("option_c"));
+                    qs.setOptionD(rs.getString("option_d"));
+                    qs.setCorrectOption(rs.getString("correct_option"));
+
+                    questions.add(qs);
+                }
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+        return questions;
+    }
+
 }

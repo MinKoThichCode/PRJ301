@@ -84,11 +84,10 @@
                 <!-- Giả sử category được chọn từ danh sách có sẵn --> 
                 <select id="category" name="category" required>
                     <option value="">--Select Category--</option>
-                    <option value="1">Math</option>
-                    <option value="2">Physics</option>
-                    <option value="3">Science</option>
-                    <option value="4">History</option>
-                    <option value="5">Literature</option>
+                    <option value="1">Quiz</option>
+                    <option value="2">Midterm</option>
+                    <option value="3">Final</option>
+
                 </select>
 
                 <label for="totalMarks">Total Marks:</label>

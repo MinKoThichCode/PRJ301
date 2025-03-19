@@ -8,6 +8,7 @@ package controller;
 import dao.ExamDAO;
 import dao.UserDAO;
 import dto.ExamDTO;
+import dto.QuestionDTO;
 import dto.UserDTO;
 import java.io.IOException;
 import java.io.PrintWriter;
@@ -141,7 +142,7 @@ public class MainController extends HttpServlet {
                         session.setAttribute("message", "Only Instructors can create exams!");
                         url = "home.jsp";
                     } else {
-                        // Chuyển hướng đến form tạo bài thi: createExam.jsp
+                      
                         url = "create.jsp";
                     }
                 } else if (action.equals("create")) {
@@ -156,7 +157,7 @@ public class MainController extends HttpServlet {
                         int totalMarks = Integer.parseInt(request.getParameter("totalMarks"));
                         int duration = Integer.parseInt(request.getParameter("duration"));
 
-                        // Giả sử ExamDTO có constructor: ExamDTO(id, title, subject, categoryId, totalMarks, duration)
+                        
                         ExamDTO newExam = new ExamDTO(0, examTitle, subject, categoryId, totalMarks, duration);
                         boolean created = edao.create(newExam);
                         if (created) {
@@ -177,9 +178,9 @@ public class MainController extends HttpServlet {
                         session.setAttribute("message", "Only Instructors can add questions!");
                         url = "home.jsp";
                     } else {
-                        // Lấy exam_id từ request param
+                        
                         String examIdStr = request.getParameter("exam_id");
-                        // Forward sang addQuestion.jsp
+                        
                         request.setAttribute("exam_id", examIdStr);
                         url = "add.jsp";
                     }
@@ -190,7 +191,7 @@ public class MainController extends HttpServlet {
                         session.setAttribute("message", "Only Instructors can add questions!");
                         url = "home.jsp";
                     } else {
-                        // Lấy dữ liệu từ form addQuestion.jsp
+                      
                         int examId = Integer.parseInt(request.getParameter("exam_id"));
                         String questionText = request.getParameter("question_text");
                         String optionA = request.getParameter("option_a");
@@ -199,7 +200,7 @@ public class MainController extends HttpServlet {
                         String optionD = request.getParameter("option_d");
                         String correctOption = request.getParameter("correct_option");
 
-                        // Gọi hàm addQuestion(...) trong DAO
+                      
                         boolean added = edao.addQuestion(examId, questionText, optionA, optionB, optionC, optionD, correctOption);
                         if (added) {
                             session.setAttribute("message", "Question added successfully!");
@@ -209,6 +210,54 @@ public class MainController extends HttpServlet {
                         url = "home.jsp";
                     }
 
+                } else if (action.equals("takeExam")) {
+                    HttpSession session = request.getSession();
+                    UserDTO user = (UserDTO) session.getAttribute("user");
+
+                    
+                    if (user == null || !user.getRole().equalsIgnoreCase("Student")) {
+                        session.setAttribute("message", "Only Students can take exams!");
+                        url = "home.jsp";
+                    } else {
+                        int examID = Integer.parseInt(request.getParameter("examID"));
+                      
+                        List<QuestionDTO> questions = edao.getQuestionsByExam(examID);
+
+                       
+                        request.setAttribute("questions", questions);
+                        request.setAttribute("examID", examID);
+
+                        
+                        url = "takeExam.jsp";
+                    }
+                } else if (action.equals("submitExam")) {
+                    HttpSession session = request.getSession();
+                    UserDTO user = (UserDTO) session.getAttribute("user");
+                    if (user == null || !user.getRole().equalsIgnoreCase("Student")) {
+                        session.setAttribute("message", "Only Students can submit exams!");
+                        url = "home.jsp";
+                    } else {
+                        int examID = Integer.parseInt(request.getParameter("examID"));
+                       
+                        List<QuestionDTO> questions = edao.getQuestionsByExam(examID);
+                        int score = 0;
+
+                       
+                        for (QuestionDTO q : questions) {
+                            String userAnswer = request.getParameter("answer_" + q.getQuestionId());
+                            if (userAnswer != null && userAnswer.equalsIgnoreCase(q.getCorrectOption())) {
+                                score++;
+                            }
+                        }
+
+                        double finalScore = ((double) score / questions.size()) * 10;
+
+                      
+                        session.setAttribute("message", "Exam submitted! Your score: " + finalScore + " " +"Points");
+
+                       
+                        url = "viewResults.jsp";
+                    }
                 }
             }
 
@@ -222,7 +271,7 @@ public class MainController extends HttpServlet {
         }
     }
 
-    // <editor-fold defaultstate="collapsed" desc="HttpServlet methods. Click on the + sign on the left to edit the code.">
+// <editor-fold defaultstate="collapsed" desc="HttpServlet methods. Click on the + sign on the left to edit the code.">
     /**
      * Handles the HTTP <code>GET</code> method.
      *

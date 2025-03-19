@@ -1,4 +1,3 @@
-
 <%-- 
     Document   : search
     Created on : Feb 13, 2025, 11:27:20 AM
@@ -197,9 +196,9 @@
                                     <td>${b.quantity}</td>
                                     <c:if test="${isAdmin}">
                                     <td><a href="MainController?action=edit&id=${b.bookID}&searchTerm=${searchTerm}">
-                                            <img src="assets/images/Text-Edit-icon.png"  style="height: 25px"/>                              
+                                            <img src="assets/images/edit-icon.png"  style="height: 25px"/>                              
                                         </a><a href="MainController?action=delete&id=${b.bookID}&searchTerm=${searchTerm}">
-                                            <img src="assets/images/delete-file-icon.png"  style="height: 25px"/>                              
+                                            <img src="assets/images/delete-icon.png"  style="height: 25px"/>                              
                                         </a></td>
                                     </c:if>
                                 </tr>

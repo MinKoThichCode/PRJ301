@@ -1,5 +1,6 @@
-<%@taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
+
 <%@page contentType="text/html" pageEncoding="UTF-8"%>
+<%@taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <!DOCTYPE html>
 <html>
     <head>
@@ -91,15 +92,11 @@
                     </div>
 
                     <button type="submit" class="submit-btn">Đăng nhập</button>
-                    
-                    <%
-                        String mess = request.getAttribute("mess")+"";
-                    %>
-                    <%=mess.equals("null")?"":mess%>
                 </form>
+                ${requestScope.message==null?"":requestScope.message}
             </div>
         </div>
-
-        <jsp:include page="footer.jsp"/>
+        <%@include file="footer.jsp" %>
+        <jsp:include page="footer.jsp" />
     </body>
 </html>

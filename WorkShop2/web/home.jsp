@@ -18,7 +18,7 @@
     <body>
         <%@include file="header.jsp" %>
 
-       
+
         <%
             UserDTO user = (UserDTO) session.getAttribute("user");
             if (user == null) {
@@ -27,16 +27,9 @@
             }
         %>
 
-        <h1>Welcome <%= user.getName()%></h1>
 
-        
-        <form action="MainController">
-            <input type="hidden" name="action" value="logout">
-            <input type="submit" value="Logout">
-        </form>
-        <br>
 
-        
+
         <%
             String msg = (String) session.getAttribute("message");
             if (msg != null) {
@@ -47,10 +40,10 @@
             }
         %>
 
-        
+
         <%
-            String searchTerm = (request.getAttribute("searchTerm") == null)
-                    ? "": request.getAttribute("searchTerm").toString();
+            String searchTerm = (session.getAttribute("searchTerm") == null)
+                    ? "" : session.getAttribute("searchTerm").toString();
             searchTerm = searchTerm.equals("null") ? "" : searchTerm;
         %>
         <form action="MainController">
@@ -61,27 +54,26 @@
             <br>
             <% if (user.getRole().equalsIgnoreCase("Instructor")) { %>
             <a href="MainController?action=createExam">Create New Exam</a>
-            <% } %>
+            <% }%>
         </form>
 
         <br/>
 
-      
+
         <form action="MainController">
             <input type="hidden" name="action" value="viewByCategory"/>
             <label>Filter by Category:</label>
             <select name="categoryId">
-                <option value="1">Math</option>
-                <option value="2">Physics</option>
-                <option value="3">Science</option>
-                <option value="4">History</option>
-                <option value="5">Literature</option>
+                <option value="1" <%= "1".equals(request.getParameter("categoryId")) ? "selected" : ""%>>Quiz</option>
+                <option value="2" <%= "2".equals(request.getParameter("categoryId")) ? "selected" : ""%>>Midterm</option>
+                <option value="3" <%= "3".equals(request.getParameter("categoryId")) ? "selected" : ""%>>Final</option>
+
             </select>
             <input type="submit" value="Filter">
         </form>
 
         <%
-            
+
             if (request.getAttribute("exams") != null) {
                 List<ExamDTO> exams = (List<ExamDTO>) request.getAttribute("exams");
         %>
